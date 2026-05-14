@@ -142,6 +142,7 @@
         </div>
 
         <div class="search-box">
+
           <input
             type="text"
             id="keyword"
@@ -151,19 +152,25 @@
           <button onclick="searchPlace()">
             검색
           </button>
+
         </div>
 
       </div>
 
-      <!-- 검색 결과 영역 -->
-      <div class="result-list" id="resultList"></div>
+      <!-- 검색 결과 리스트 -->
+      <div
+        class="result-list"
+        id="resultList">
+      </div>
 
     </div>
 
-    <!-- 지도 영역 -->
+    <!-- 오른쪽 지도 영역 -->
     <div class="map-area">
 
-      <div class="loading" id="loadingText">
+      <div
+        class="loading"
+        id="loadingText">
         지도 로딩 중...
       </div>
 
@@ -187,7 +194,7 @@
     let currentLatitude;
     let currentLongitude;
 
-    // 검색 마커 배열
+    // 마커 배열
     let markers = [];
 
     // 인포윈도우
@@ -199,50 +206,70 @@
       currentLatitude = latitude;
       currentLongitude = longitude;
 
-      const mapContainer = document.getElementById("map");
+      const mapContainer =
+        document.getElementById("map");
 
       const mapOption = {
 
-        // 현재 위치를 중심으로 설정
-        center: new kakao.maps.LatLng(latitude, longitude),
+        // 현재 위치 중심
+        center: new kakao.maps.LatLng(
+          latitude,
+          longitude
+        ),
 
         // 확대 레벨
         level: 5
       };
 
       // 지도 생성
-      map = new kakao.maps.Map(mapContainer, mapOption);
+      map = new kakao.maps.Map(
+        mapContainer,
+        mapOption
+      );
 
-      // 장소 검색 서비스 생성
-      placesService = new kakao.maps.services.Places();
+      // 장소 검색 객체 생성
+      placesService =
+        new kakao.maps.services.Places();
 
-      // 인포윈도우 생성
-      infoWindow = new kakao.maps.InfoWindow({
-        zIndex: 1
-      });
+      // 공용 인포윈도우 생성
+      infoWindow =
+        new kakao.maps.InfoWindow({
+          zIndex: 1
+        });
 
       // 현재 위치 마커 생성
-      const currentMarker = new kakao.maps.Marker({
-        map: map,
-        position: new kakao.maps.LatLng(latitude, longitude)
-      });
+      const currentMarker =
+        new kakao.maps.Marker({
+
+          map: map,
+
+          position:
+            new kakao.maps.LatLng(
+              latitude,
+              longitude
+            )
+        });
 
       // 현재 위치 팝업
-      const currentInfo = new kakao.maps.InfoWindow({
-        content: `
-          <div style="padding:8px; font-size:13px;">
-            📍 현재 위치
-          </div>
-        `
-      });
+      const currentInfo =
+        new kakao.maps.InfoWindow({
+
+          content: `
+            <div style="padding:8px; font-size:13px;">
+              📍 현재 위치
+            </div>
+          `
+        });
 
       currentInfo.open(map, currentMarker);
 
-      // 로딩 문구 제거
-      document.getElementById("loadingText").style.display = "none";
+      // 로딩 제거
+      document
+        .getElementById("loadingText")
+        .style.display = "none";
     }
 
-    // 현재 위치 가져오기
+    // 현재 위치 불러오기
     function loadCurrentLocation() {
 
       if (navigator.geolocation) {
@@ -252,55 +279,80 @@
           // 위치 허용 성공
           function(position) {
 
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+            const latitude =
+              position.coords.latitude;
 
-            initializeMap(latitude, longitude);
+            const longitude =
+              position.coords.longitude;
+
+            initializeMap(
+              latitude,
+              longitude
+            );
           },
 
           // 위치 허용 실패
           function(error) {
 
-            alert("위치 권한을 허용해주세요.");
+            alert(
+              "위치 권한을 허용해주세요."
+            );
 
-            // 기본 위치: 서울 시청
-            initializeMap(37.5665, 126.9780);
+            // 서울 시청 기본 위치
+            initializeMap(
+              37.5665,
+              126.9780
+            );
           }
-
         );
 
       } else {
 
-        alert("이 브라우저에서는 위치 기능을 지원하지 않습니다.");
+        alert(
+          "이 브라우저에서는 위치 기능을 지원하지 않습니다."
+        );
 
-        initializeMap(37.5665, 126.9780);
+        initializeMap(
+          37.5665,
+          126.9780
+        );
       }
     }
 
-    // 키워드 검색 함수
+    // 장소 검색 함수
     function searchPlace() {
 
-      const keyword = document
-        .getElementById("keyword")
-        .value
-        .trim();
+      const keyword =
+        document
+          .getElementById("keyword")
+          .value
+          .trim();
 
+      // 빈 검색 방지
       if (!keyword) {
 
-        alert("검색어를 입력해주세요.");
+        alert(
+          "검색어를 입력해주세요."
+        );
+
         return;
       }
 
-      // 현재 위치 기준 검색
+      // 검색 옵션
       const searchOption = {
 
-        location: new kakao.maps.LatLng(
-          currentLatitude,
-          currentLongitude
-        ),
+        // 현재 위치 기준 경도
+        x: currentLongitude,
 
+        // 현재 위치 기준 위도
+        y: currentLatitude,
+
+        // 반경 3km
         radius: 3000,
-        sort: kakao.maps.services.SortBy.DISTANCE
+
+        // 거리순 정렬
+        sort:
+          kakao.maps.services.SortBy.DISTANCE
       };
 
       // 키워드 검색 실행
@@ -310,13 +362,21 @@
 
         function(data, status) {
 
-          if (status === kakao.maps.services.Status.OK) {
+          console.log(data);
+          console.log(status);
+
+          if (
+            status ===
+            kakao.maps.services.Status.OK
+          ) {
 
             displaySearchResult(data);
 
           } else {
 
-            alert("검색 결과가 없습니다.");
+            alert(
+              "검색 결과가 없습니다."
+            );
           }
         },
 
@@ -324,11 +384,13 @@
       );
     }
 
-    // 검색 결과 표시 함수
+    // 검색 결과 출력 함수
     function displaySearchResult(places) {
 
       const resultList =
-        document.getElementById("resultList");
+        document.getElementById(
+          "resultList"
+        );
 
       // 기존 리스트 제거
       resultList.innerHTML = "";
@@ -336,34 +398,41 @@
       // 기존 마커 제거
       removeMarkers();
 
-      // 지도 범위 재설정용 객체
-      const bounds = new kakao.maps.LatLngBounds();
+      // 지도 범위 객체
+      const bounds =
+        new kakao.maps.LatLngBounds();
 
       places.forEach(function(place) {
 
-        const position = new kakao.maps.LatLng(
-          place.y,
-          place.x
-        );
+        const position =
+          new kakao.maps.LatLng(
+            place.y,
+            place.x
+          );
 
-        // 지도 범위에 추가
+        // 지도 범위 추가
         bounds.extend(position);
 
         // 마커 생성
-        const marker = new kakao.maps.Marker({
-          map: map,
-          position: position
-        });
+        const marker =
+          new kakao.maps.Marker({
 
-        // 마커 저장
+            map: map,
+            position: position
+          });
+
+        // 마커 배열 저장
         markers.push(marker);
 
-        // 리스트 아이템 생성
-        const item = document.createElement("div");
+        // 결과 아이템 생성
+        const item =
+          document.createElement("div");
 
-        item.className = "result-item";
+        item.className =
+          "result-item";
 
         item.innerHTML = `
+
           <div class="place-name">
             ${place.place_name}
           </div>
@@ -375,76 +444,113 @@
           <div class="place-phone">
             ${place.phone || "전화번호 없음"}
           </div>
+
         `;
 
-        // 리스트에 추가
+        // 리스트 추가
         resultList.appendChild(item);
 
         // 팝업 내용
         const popupContent = `
+
           <div style="padding:10px; min-width:220px;">
-            <div style="font-weight:bold; margin-bottom:6px;">
+
+            <div style="
+              font-weight:bold;
+              margin-bottom:6px;
+            ">
               ${place.place_name}
             </div>
 
-            <div style="font-size:13px; color:#555;">
+            <div style="
+              font-size:13px;
+              color:#555;
+            ">
               ${place.address_name}
             </div>
+
           </div>
+
         `;
 
         // 마커 클릭 이벤트
         kakao.maps.event.addListener(
+
           marker,
+
           "click",
+
           function() {
 
-            infoWindow.setContent(popupContent);
-            infoWindow.open(map, marker);
+            infoWindow.setContent(
+              popupContent
+            );
+
+            infoWindow.open(
+              map,
+              marker
+            );
           }
         );
 
         // 리스트 클릭 이벤트
-        item.addEventListener("click", function() {
+        item.addEventListener(
 
-          // 지도 중심 이동
-          map.setCenter(position);
+          "click",
 
-          // 지도 확대
-          map.setLevel(3);
+          function() {
 
-          // 팝업 열기
-          infoWindow.setContent(popupContent);
-          infoWindow.open(map, marker);
-        });
+            // 지도 이동
+            map.setCenter(position);
+
+            // 확대
+            map.setLevel(3);
+
+            // 팝업 열기
+            infoWindow.setContent(
+              popupContent
+            );
+
+            infoWindow.open(
+              map,
+              marker
+            );
+          }
+        );
 
       });
 
-      // 검색 결과가 모두 보이도록 지도 범위 설정
+      // 결과 범위 맞춤
       map.setBounds(bounds);
     }
 
-    // 기존 마커 제거 함수
+    // 기존 마커 제거
     function removeMarkers() {
 
       markers.forEach(function(marker) {
 
         marker.setMap(null);
+
       });
 
       markers = [];
     }
 
-    // 엔터키 검색 기능
-    document.addEventListener("keydown", function(event) {
+    // 엔터키 검색
+    document.addEventListener(
 
-      if (event.key === "Enter") {
+      "keydown",
 
-        searchPlace();
+      function(event) {
+
+        if (event.key === "Enter") {
+
+          searchPlace();
+        }
       }
-    });
+    );
 
-    // SDK 완전 로드 후 실행
+    // SDK 로드 완료 후 실행
     kakao.maps.load(function() {
 
       loadCurrentLocation();
