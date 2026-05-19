@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- 브라우저 탭 제목 -->
   <title>갈증 해결 지도</title>
 
   <style>
@@ -38,13 +40,14 @@
       flex-direction: column;
     }
 
-    /* 헤더 */
+    /* 상단 영역 */
     .header {
       padding: 20px;
       border-bottom: 1px solid #eee;
     }
 
-    .title {
+    /* 제목 */
+    .search-title {
       font-size: 26px;
       font-weight: bold;
       margin-bottom: 15px;
@@ -71,7 +74,7 @@
       background-color: #fee500;
     }
 
-    /* 검색 결과 */
+    /* 검색 결과 리스트 */
     .result-list {
       flex: 1;
       overflow-y: auto;
@@ -117,6 +120,7 @@
       height: 100%;
     }
 
+    /* 로딩 문구 */
     .loading {
       position: absolute;
       top: 20px;
@@ -136,12 +140,13 @@
 
   <div class="container">
 
-    <!-- 왼쪽 영역 -->
+    <!-- 왼쪽 사이드바 -->
     <div class="sidebar">
 
       <div class="header">
 
-        <div class="title">
+        <!-- 지도 제목 -->
+        <div class="search-title">
           🥤 갈증 해결 지도
         </div>
 
@@ -198,10 +203,11 @@
     let placesService;
     let infoWindow;
 
+    // 현재 위치 저장 변수
     let currentLatitude;
     let currentLongitude;
 
-    // 장소 마커 저장 배열
+    // 장소 마커 배열
     let markers = [];
 
     // 지도 초기화
@@ -232,7 +238,7 @@
           mapOption
         );
 
-      // 장소 검색 객체 생성
+      // 장소 검색 서비스
       placesService =
         new kakao.maps.services.Places();
 
@@ -242,13 +248,13 @@
           zIndex: 1
         });
 
-      // 현재 위치 파란 점 표시
+      // 현재 위치 표시
       createCurrentLocationMarker(
         latitude,
         longitude
       );
 
-      // 기본 검색 실행
+      // 기본 검색
       searchCategory("CE7");
 
       // 로딩 제거
@@ -261,14 +267,16 @@
     // 현재 위치 파란 점 생성
     function createCurrentLocationMarker(latitude, longitude) {
 
+      const currentPosition =
+        new kakao.maps.LatLng(
+          latitude,
+          longitude
+        );
+
       const circle =
         new kakao.maps.Circle({
 
-          center:
-            new kakao.maps.LatLng(
-              latitude,
-              longitude
-            ),
+          center: currentPosition,
 
           radius: 25,
 
@@ -288,7 +296,7 @@
 
     }
 
-    // 현재 위치 가져오기
+    // 현재 위치 불러오기
     function loadCurrentLocation() {
 
       if (navigator.geolocation) {
@@ -336,10 +344,10 @@
 
     }
 
-    // 카테고리 검색
+    // 카테고리 검색 함수
     function searchCategory(categoryCode, buttonElement) {
 
-      // 탭 활성화 변경
+      // 탭 스타일 변경
       const buttons =
         document.querySelectorAll(
           ".tab-button"
@@ -369,15 +377,12 @@
         .getElementById("resultList")
         .innerHTML = "";
 
-      // categorySearch 사용
+      // 카테고리 검색
       placesService.categorySearch(
 
         categoryCode,
 
         function(data, status) {
-
-          console.log(data);
-          console.log(status);
 
           if (
             status ===
@@ -398,7 +403,6 @@
 
         {
 
-          // 현재 지도 중심 기준 검색
           location:
             new kakao.maps.LatLng(
               currentLatitude,
@@ -416,7 +420,7 @@
 
     }
 
-    // 장소 출력
+    // 장소 출력 함수
     function displayPlaces(places) {
 
       const resultList =
